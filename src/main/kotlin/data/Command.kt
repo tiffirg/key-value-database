@@ -1,6 +1,6 @@
 package data
 
-enum class Command() {
+enum class Command {
     CREATE,
     DROP,
     ADD,
