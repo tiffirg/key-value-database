@@ -5,6 +5,7 @@ import data.Command
 import data.Command.*
 
 const val REQUIRED_ARGS = 2
+const val MEAN_ARGS = 3
 const val MAX_ARGS = 4
 
 class ArgsParser {  // use kotlinx-cli...?
@@ -14,24 +15,40 @@ class ArgsParser {  // use kotlinx-cli...?
         var batch: String? = null
         if (args.size !in REQUIRED_ARGS..MAX_ARGS)
             return null
-        val command = defineCommand(args[1])
-        when (command) {
-            ADD, UPDATE -> {
+        val command = defineCommand(args[1]) ?: return null
+
+        when {
+            checkCreateGetAndDelete(command, args.size) -> {
+                key = args[2]
+            }
+            checkBatch(command, args.size) -> {
+                batch = args[2]
+            }
+            checkAddAndUpdate(command, args.size) -> {
                 key = args[2]
                 value = args[3]
             }
-            GET, DELETE -> {
-                key = args[2]
-            }
-            BATCH -> {
-                batch = args[2]
-            }
-            else -> {
-            }  // kotlin ругается
+            !checkCreateAndDrop(command, args.size) -> return null
         }
         return Arguments(args[0], command, key, value, batch)
     }
 
-    private fun defineCommand(parsedCommand: String) =
-        Command.valueOf(parsedCommand.uppercase())  // Разрешаю нижний регистр
+    private fun checkCreateAndDrop(command: Command, argsSize: Int) =
+        (command == CREATE || command == DROP) && argsSize == REQUIRED_ARGS
+
+    private fun checkAddAndUpdate(command: Command, argsSize: Int) =
+        (command == ADD || command == UPDATE) && argsSize == MAX_ARGS
+
+    private fun checkCreateGetAndDelete(command: Command, argsSize: Int) =
+        (command == GET || command == DELETE) && argsSize == MEAN_ARGS
+
+    private fun checkBatch(command: Command, argsSize: Int) = command == BATCH && argsSize == MEAN_ARGS
+
+
+    private fun defineCommand(parsedCommand: String): Command? {
+        for (command in Command.values())
+            if (command.toString() == parsedCommand.uppercase())
+                return command
+        return null
+    }
 }
