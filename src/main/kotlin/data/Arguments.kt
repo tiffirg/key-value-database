@@ -6,4 +6,6 @@ data class Arguments(
     val key: String?,
     val value: String?,
     val batch: String?
-)
+) {
+    fun toArgumentsForDB() = ArgumentsForDB(db, command, key, value)
+}

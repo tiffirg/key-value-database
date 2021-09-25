@@ -7,5 +7,5 @@ enum class ExitCode(val exitCode: Int) {
     INVALID_BATCH(3),
     INVALID_KEY(4),
     KEY_SIZE_EXCEEDED(5),
-    VALUE_SIZE_EXCEEDED(6)
+    INVALID_STRING(6)
 }
