@@ -11,9 +11,9 @@ internal class Tests {
     @Test
     fun testParserCreateAndDrop() {
         val argsCreate = arrayOf("test.db", "CREATE")
-        val argumentsCreate = Arguments("test.db", CREATE, null, null, null)
+        val argumentsCreate = Arguments("test.db", CREATE, null, null)
         val argsDrop = arrayOf("test.db", "DROP")
-        val argumentsDrop = Arguments("test.db", DROP, null, null, null)
+        val argumentsDrop = Arguments("test.db", DROP, null, null)
         assertEquals(argumentsCreate, argsParser.parse(argsCreate))
         assertEquals(argumentsDrop, argsParser.parse(argsDrop))
     }
@@ -23,8 +23,8 @@ internal class Tests {
         val argsAdd = arrayOf("test.db", "ADD", "kotlin", "java")
         val argsUpdate = arrayOf("test.db", "UPDATE", "kotlin", "noJava")
 
-        val argumentsAdd = Arguments("test.db", ADD, "kotlin", "java", null)
-        val argumentsUpdate = Arguments("test.db", UPDATE, "kotlin", "noJava", null)
+        val argumentsAdd = Arguments("test.db", ADD, "kotlin", "java")
+        val argumentsUpdate = Arguments("test.db", UPDATE, "kotlin", "noJava")
         assertEquals(argumentsAdd, argsParser.parse(argsAdd))
         assertEquals(argumentsUpdate, argsParser.parse(argsUpdate))
     }
@@ -34,16 +34,9 @@ internal class Tests {
         val argsGet = arrayOf("test.db", "GET", "kotlin")
         val argsDelete = arrayOf("test.db", "DELETE", "kotlin")
 
-        val argumentsGet = Arguments("test.db", GET, "kotlin", null, null)
-        val argumentsDelete = Arguments("test.db", DELETE, "kotlin", null, null)
+        val argumentsGet = Arguments("test.db", GET, "kotlin", null)
+        val argumentsDelete = Arguments("test.db", DELETE, "kotlin", null)
         assertEquals(argumentsGet, argsParser.parse(argsGet))
         assertEquals(argumentsDelete, argsParser.parse(argsDelete))
-    }
-
-    @Test
-    fun testParserBatch() {
-        val argsBatch = arrayOf("test.db", "BATCH", "batch.txt")
-        val argumentsBatch = Arguments("test.db", GET, null, null, "batch.txt")
-        assertEquals(argumentsBatch, argsParser.parse(argsBatch))
     }
 }
