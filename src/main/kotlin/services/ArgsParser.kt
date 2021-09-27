@@ -12,7 +12,6 @@ class ArgsParser {  // use kotlinx-cli...?
     fun parse(args: Array<String>): Arguments? {
         var key: String? = null
         var value: String? = null
-        var batch: String? = null
         if (args.size !in REQUIRED_ARGS..MAX_ARGS)
             return null
         val command = defineCommand(args[1]) ?: return null
@@ -21,16 +20,13 @@ class ArgsParser {  // use kotlinx-cli...?
             checkCreateGetAndDelete(command, args.size) -> {
                 key = args[2]
             }
-            checkBatch(command, args.size) -> {
-                batch = args[2]
-            }
             checkAddAndUpdate(command, args.size) -> {
                 key = args[2]
                 value = args[3]
             }
             !checkCreateAndDrop(command, args.size) -> return null
         }
-        return Arguments(args[0], command, key, value, batch)
+        return Arguments(args[0], command, key, value)
     }
 
     private fun checkCreateAndDrop(command: Command, argsSize: Int) =
@@ -41,8 +37,6 @@ class ArgsParser {  // use kotlinx-cli...?
 
     private fun checkCreateGetAndDelete(command: Command, argsSize: Int) =
         (command == GET || command == DELETE) && argsSize == MEAN_ARGS
-
-    private fun checkBatch(command: Command, argsSize: Int) = command == BATCH && argsSize == MEAN_ARGS
 
 
     private fun defineCommand(parsedCommand: String): Command? {

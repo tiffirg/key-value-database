@@ -6,6 +6,5 @@ enum class Command {
     ADD,
     GET,
     UPDATE,
-    DELETE,
-    BATCH
+    DELETE
 }

@@ -6,7 +6,8 @@
 
 # Особенности
 + Ограничение на размер key - 32B
-+ Ограничение на размер value - 64B
++ Запрещен нулевой байт - `\0` в строке ключа и значения
++ Обрабатывается нижний регистр команд
 
 # Commands
 
@@ -18,8 +19,6 @@
 | `GET`      | Получение данных        |
 | `UPDATE`   | Изменение данных        |
 | `DELETE`   | Удаление данных         |
-| `BATCH`    | Выполнить команды батча |
-
 
 # Run & Test Application
 
@@ -40,11 +39,6 @@ main.kt <path db> <command> <key> <value>
 main.kt <path db> <command> <key>
 ```
 
-### Операция `BATCH`
-```
-main.kt <path db> <command> <path batch>
-```
-
 ## Test
 
 Запустить скрипт `Tests.kt`
@@ -53,10 +47,10 @@ main.kt <path db> <command> <path batch>
 
 | Название            | Exit code | Описание                   |
 | ----------          | --------- | -------------------------- |
-| SUCCESS             | 0         | :)                         |
+| SUCCESS             | 0         | Операция прошла успешно    |
 | HELP                | 1         | Неправильный ввод          |
 | INVALID_DB          | 2         | Неправильный путь к БД     |
-| INVALID_BATCH       | 3         | Неправильный путь к батчу  |
-| INVALID_KEY         | 4         | Ключ отсутствует           |
-| KEY_SIZE_EXCEEDED   | 5         | Превышен размер ключа      |
-| VALUE_SIZE_EXCEEDED | 6         | Превышен размер значения   |
+| INVALID_KEY         | 3         | Ключ отсутствует           |
+| KEY_SIZE_EXCEEDED   | 4         | Превышен размер ключа      |
+| INVALID_STRING      | 5         | Не корректная строка       |
+| DB_ALREADY_EXISTS   | 6         | Файл уже существует        |
