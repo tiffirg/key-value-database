@@ -8,4 +8,5 @@ enum class ExitCode(val exitCode: Int) {
     KEY_SIZE_EXCEEDED(4),
     INVALID_STRING(5),
     DB_ALREADY_EXISTS(6),
+    KEY_ALREADY_EXIST(7)
 }

@@ -18,4 +18,6 @@ fun printInvalidString(str: String?) = println("$str: Incorrect entry")
 
 fun printDBAlreadyExists(db: String) = println("$db already exists")
 
+fun printKeyAlreadyExists(key: String?) = println("$key already exists")
+
 fun printGetResponseDB(db: String, key: String?, value: String?) = println("$db: $key - $value")
