@@ -10,14 +10,14 @@ fun printHelp() = println(
 
 fun printNotExistFile(nameFile: String) = println("$nameFile: No such file or directory")
 
-fun printInvalidKey(db: String, key: String?) = println("$db: No such database key $key")
+fun printInvalidKey(db: String, key: String?) = println("$db: No such key \"$key\"")
 
 fun printKeySizeExceeded(key: String?) = println("$key: Key size exceeded")
 
 fun printInvalidString(str: String?) = println("$str: Incorrect entry")
 
-fun printDBAlreadyExists(db: String) = println("$db already exists")
+fun printDBAlreadyExists(db: String) = println("Database \"$db\" already exists")
 
-fun printKeyAlreadyExists(key: String?) = println("$key already exists")
+fun printKeyAlreadyExists(key: String?) = println("Key \"$key\" already exists")
 
 fun printGetResponseDB(db: String, key: String?, value: String?) = println("$db: $key - $value")
