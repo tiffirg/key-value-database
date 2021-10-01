@@ -236,18 +236,21 @@ class InterfaceDB {
 
     private fun transformByteArrayLinkValue(element: String): ByteArray {
         val resultArray = ByteArray(sizeFieldLinkValue) { 0x00 }
-        for (i in element.indices)
+        for (i in element.indices) {
             resultArray[i] = element[i].code.toByte()
+        }
         return resultArray
     }
 
     // Private func !!!
     fun transformByteArrayField(key: String, linkValue: String): ByteArray {
         val resultArray = ByteArray(sizeFieldKey + sizeFieldLinkValue) { 0x00 }
-        for (i in key.indices)
+        for (i in key.indices) {
             resultArray[i] = key[i].code.toByte()
-        for (i in linkValue.indices)
+        }
+        for (i in linkValue.indices) {
             resultArray[i + sizeFieldKey] = linkValue[i].code.toByte()
+        }
         return resultArray
     }
 }

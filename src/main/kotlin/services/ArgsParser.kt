@@ -17,8 +17,9 @@ class ArgsParser {  // use kotlinx-cli...?
     fun parse(args: Array<String>): Arguments? {
         var key: String? = null
         var value: String? = null
-        if (args.size !in REQUIRED_ARGS..MAX_ARGS)
+        if (args.size !in REQUIRED_ARGS..MAX_ARGS) {
             return null
+        }
         val command = defineCommand(args[1]) ?: return null
 
         when {
@@ -45,9 +46,11 @@ class ArgsParser {  // use kotlinx-cli...?
 
 
     private fun defineCommand(parsedCommand: String): Command? {
-        for (command in Command.values())
-            if (command.toString() == parsedCommand.uppercase())
+        for (command in Command.values()) {
+            if (command.toString() == parsedCommand.uppercase()) {
                 return command
+            }
+        }
         return null
     }
 }
