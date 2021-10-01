@@ -20,8 +20,8 @@ import java.util.Queue
 import java.util.LinkedList
 
 class InterfaceDB {
-    private val sizeFieldKey = 16
-    private val sizeFieldLinkValue = 16
+    private val sizeFieldKey = 32
+    private val sizeFieldLinkValue = 32
     private val sizeField = sizeFieldKey + sizeFieldLinkValue
 
     private val queueCommands: Queue<Arguments> = LinkedList()
