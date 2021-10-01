@@ -66,6 +66,36 @@ class InterfaceDB {
 
     fun addRequest(args: Arguments) = queueCommands.add(args)
 
+    private fun processRequest(args: Arguments): ResponseDB {
+        val existDB = checkExistDB(args.db)
+        if (args.command != CREATE && !existDB) {
+            return args.toResponseDB(INVALID_DB)
+        }
+
+        if (!args.key.isNullOrBlank()) {
+            if (checkSizeKey(args.key)) {
+                return args.toResponseDB(KEY_SIZE_EXCEEDED)
+            }
+
+            if (checkNullByte(args.key) || (!args.value.isNullOrBlank() && checkNullByte(args.value))) {
+                return args.toResponseDB(INVALID_STRING)
+            }
+        }
+
+        if (existDB && args.command == CREATE) {
+            return args.toResponseDB(DB_ALREADY_EXISTS)
+        }
+
+        return when (args.command) {
+            CREATE -> create(args)
+            DROP -> drop(args)
+            ADD -> add(args)
+            GET -> get(args)
+            UPDATE -> update(args)
+            DELETE -> delete(args)
+        }
+    }
+
     private fun create(args: Arguments): ResponseDB {
         File(args.db).createNewFile()
         return args.toResponseDB(SUCCESS)
@@ -106,7 +136,6 @@ class InterfaceDB {
     }
 
     // Private func !!!
-    // Можно добавить проверку на сходство с прежним значением
     fun update(args: Arguments): ResponseDB {
         val fileDB = RandomAccessFile(args.db, "rws")
         val (numberFirstByteFieldSearch, isSearched) = binarySearch(fileDB, args.key!!)
@@ -131,43 +160,12 @@ class InterfaceDB {
         return args.toResponseDB(SUCCESS)
     }
 
-    private fun processRequest(args: Arguments): ResponseDB {
-        val existDB = checkExistDB(args.db)
-        if (args.command != CREATE && !existDB) {
-            return args.toResponseDB(INVALID_DB)
-        }
-
-        if (!args.key.isNullOrBlank()) {
-            if (checkSizeKey(args.key)) {
-                return args.toResponseDB(KEY_SIZE_EXCEEDED)
-            }
-
-            if (checkNullByte(args.key) || (!args.value.isNullOrBlank() && checkNullByte(args.value))) {
-                return args.toResponseDB(INVALID_STRING)
-            }
-        }
-
-        if (existDB && args.command == CREATE) {
-            return args.toResponseDB(DB_ALREADY_EXISTS)
-        }
-
-        return when (args.command) {
-            CREATE -> create(args)
-            DROP -> drop(args)
-            ADD -> add(args)
-            GET -> get(args)
-            UPDATE -> update(args)
-            DELETE -> delete(args)
-        }
-    }
-
     private fun checkExistDB(db: String) = File(db).exists()
 
     private fun checkSizeKey(key: String) = key.toByteArray().size > sizeFieldKey
 
     private fun checkNullByte(str: String) = str.contains("0x00")
 
-    // Следует сдвигать кусками большого размера, вместо всего сразу
     private fun addFieldToDB(fileDB: RandomAccessFile, numberFirstByte: Long, key: String, linkValue: String) {
         val newField = transformByteArrayField(key, linkValue)
         fileDB.seek(numberFirstByte)
@@ -189,7 +187,7 @@ class InterfaceDB {
 
     private fun updateLinkValue(fileDB: RandomAccessFile, numberFirstByte: Long, linkValue: String) {
         fileDB.seek(numberFirstByte + sizeFieldKey)
-        fileDB.write(transformByteArray(linkValue))
+        fileDB.write(transformByteArrayLinkValue(linkValue))
     }
 
     private fun addValueToDB(value: String): Long {
@@ -236,7 +234,7 @@ class InterfaceDB {
         return arrayLinkValue.toString(Charsets.UTF_8).toLong()
     }
 
-    private fun transformByteArray(element: String): ByteArray {
+    private fun transformByteArrayLinkValue(element: String): ByteArray {
         val resultArray = ByteArray(sizeFieldLinkValue) { 0x00 }
         for (i in element.indices)
             resultArray[i] = element[i].code.toByte()
