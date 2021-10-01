@@ -1,9 +1,24 @@
 import data.Arguments
 import data.Command.GET
 import data.ExitCode
-import data.ExitCode.*
+import data.ExitCode.SUCCESS
+import data.ExitCode.HELP
+import data.ExitCode.INVALID_DB
+import data.ExitCode.INVALID_KEY
+import data.ExitCode.INVALID_STRING
+import data.ExitCode.KEY_SIZE_EXCEEDED
+import data.ExitCode.KEY_ALREADY_EXISTS
+import data.ExitCode.DB_ALREADY_EXISTS
 import data.ResponseDB
-import services.*
+import services.ArgsParser
+import services.printHelp
+import services.printNotExistFile
+import services.printInvalidKey
+import services.printInvalidString
+import services.printDBAlreadyExists
+import services.printKeyAlreadyExists
+import services.printGetResponseDB
+import services.printKeySizeExceeded
 
 class App {
     private val db = InterfaceDB()
@@ -38,7 +53,7 @@ class App {
             KEY_SIZE_EXCEEDED -> printKeySizeExceeded(response.key)
             INVALID_STRING -> printInvalidString(response.key)
             DB_ALREADY_EXISTS -> printDBAlreadyExists(response.db)
-            KEY_ALREADY_EXIST -> printKeyAlreadyExists(response.key)
+            KEY_ALREADY_EXISTS -> printKeyAlreadyExists(response.key)
             else -> {
                 if (response.command == GET) {
                     printGetResponseDB(response.db, response.key, response.value)

@@ -2,7 +2,12 @@ package services
 
 import data.Arguments
 import data.Command
-import data.Command.*
+import data.Command.CREATE
+import data.Command.DROP
+import data.Command.ADD
+import data.Command.UPDATE
+import data.Command.GET
+import data.Command.DELETE
 
 const val REQUIRED_ARGS = 2
 const val MEAN_ARGS = 3

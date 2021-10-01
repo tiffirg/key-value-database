@@ -1,5 +1,10 @@
 import data.Arguments
-import data.Command.*
+import data.Command.CREATE
+import data.Command.DROP
+import data.Command.ADD
+import data.Command.UPDATE
+import data.Command.GET
+import data.Command.DELETE
 import data.ExitCode.SUCCESS
 import services.ArgsParser
 import java.io.File
@@ -13,6 +18,9 @@ val argsParser = ArgsParser()
 
 val argsCreate = arrayOf("test.db", "CREATE")
 val argsDrop = arrayOf("test.db", "DROP")
+
+const val alphabet = "abcdefghijklmnopqrstuvwxyz0123456789"
+
 
 internal class Tests {
 
@@ -82,8 +90,8 @@ internal class Tests {
 
     @Test
     fun testFuncDelete() {
-        val argsAdd = arrayOf("test.db", "ADD", "ggfg", "java")
-        val argsDelete = arrayOf("test.db", "DELETE", "ggfg")
+        val argsAdd = arrayOf("test.db", "ADD", "kotlin", "java")
+        val argsDelete = arrayOf("test.db", "DELETE", "kotlin")
         app.run(argsCreate)
         app.run(argsAdd)
         assertEquals(SUCCESS, interfaceDB.delete(argsParser.parse(argsDelete)!!).exitCode)
@@ -266,7 +274,6 @@ internal class Tests {
     fun testAppAddUpdateGetBig() {
 
         val map: MutableMap<String, String> = mutableMapOf()
-        val alphabet = "abcdefghijklmnopqrstuvwxyz0123456789"
         app.run(argsCreate)
         for (i in 1..1000) {
             val amountSymbolsKey = (4..10).random()
@@ -298,7 +305,6 @@ internal class Tests {
     @Test
     fun testAppAddUpdateDeleteGet() {
         val map: MutableMap<String, String> = mutableMapOf()
-        val alphabet = "abcdefghijklmnopqrstuvwxyz0123456789"
         app.run(argsCreate)
         for (i in 1..1000) {
             val amountSymbolsKey = (3..10).random()

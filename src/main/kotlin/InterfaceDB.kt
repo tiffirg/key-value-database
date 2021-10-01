@@ -1,11 +1,23 @@
 import data.Arguments
-import data.Command.*
-import data.ExitCode.*
+import data.Command.CREATE
+import data.Command.DROP
+import data.Command.ADD
+import data.Command.UPDATE
+import data.Command.GET
+import data.Command.DELETE
+import data.ExitCode.SUCCESS
+import data.ExitCode.INVALID_DB
+import data.ExitCode.INVALID_KEY
+import data.ExitCode.INVALID_STRING
+import data.ExitCode.KEY_SIZE_EXCEEDED
+import data.ExitCode.KEY_ALREADY_EXISTS
+import data.ExitCode.DB_ALREADY_EXISTS
 import data.ResponseBinarySearch
 import data.ResponseDB
 import java.io.File
 import java.io.RandomAccessFile
-import java.util.*
+import java.util.Queue
+import java.util.LinkedList
 
 class InterfaceDB {
     private val sizeFieldKey = 16
@@ -15,6 +27,34 @@ class InterfaceDB {
     private val queueCommands: Queue<Arguments> = LinkedList()
 
     private val nameDBValues = "values.db"
+
+    /**
+     * Бинарный поиск по индексированному файлу
+     * Каждое поле состоит из одного количества информации, тем самым
+     * итерация идет по каждому такому полю, в случае нахождения искомого ключа -
+     * вывод пары с номером байта, если же ключ не найден -
+     * вывод номера байта для вставки нового ключа
+     */
+
+    // Private func !!!
+    fun binarySearch(fileDB: RandomAccessFile, keySearch: String): ResponseBinarySearch {
+        var left = -1L
+        var medium: Long
+        var right = fileDB.length() / sizeField
+        var key: String
+        while (right - left > 1) {
+            medium = (right + left) / 2
+            key = getKeyByFirstByte(fileDB, medium * sizeField)
+            if (key < keySearch) {
+                left = medium
+            } else if (key > keySearch) {
+                right = medium
+            } else {
+                return ResponseBinarySearch(medium * sizeField, true)
+            }
+        }
+        return ResponseBinarySearch(right * sizeField, false)
+    }
 
     fun run(): List<ResponseDB> {
         val responsesDB: MutableList<ResponseDB> = mutableListOf()
@@ -45,7 +85,7 @@ class InterfaceDB {
         val fileDB = RandomAccessFile(args.db, "rws")
         val (numberFirstByteFieldSearch, isSearched) = binarySearch(fileDB, args.key!!)
         if (isSearched) {
-            return args.toResponseDB(KEY_ALREADY_EXIST)
+            return args.toResponseDB(KEY_ALREADY_EXISTS)
         }
         val linkValue = addValueToDB(args.value!!).toString()
         addFieldToDB(fileDB, numberFirstByteFieldSearch, args.key, linkValue)
@@ -121,33 +161,6 @@ class InterfaceDB {
         }
     }
 
-    /**
-     * Бинарный поиск по индексированному файлу
-     * Каждое поле состоит из одного количества информации, тем самым
-     * итерация идет по каждому такому полю, в случае нахождения искомого ключа -
-     * вывод пары с номером байта, если же ключ не найден -
-     * вывод номера байта для вставки нового ключа
-     */
-    // Private func !!!
-    fun binarySearch(fileDB: RandomAccessFile, keySearch: String): ResponseBinarySearch {
-        var left = -1L
-        var medium: Long
-        var right = fileDB.length() / sizeField
-        var key: String
-        while (right - left > 1) {
-            medium = (right + left) / 2
-            key = getKeyByFirstByte(fileDB, medium * sizeField)
-            if (key < keySearch) {
-                left = medium
-            } else if (key > keySearch) {
-                right = medium
-            } else {
-                return ResponseBinarySearch(medium * sizeField, true)
-            }
-        }
-        return ResponseBinarySearch(right * sizeField, false)
-    }
-
     private fun checkExistDB(db: String) = File(db).exists()
 
     private fun checkSizeKey(key: String) = key.toByteArray().size > sizeFieldKey
@@ -164,27 +177,6 @@ class InterfaceDB {
         fileDB.write(newField)
         fileDB.write(prevFields)
     }
-
-    //  Лучше сдвигать сразу n > 1 полей
-//    private fun addFieldToDB(fileDB: RandomAccessFile, numberFirstByte: Long, key: String, linkValue: String) {
-//        val newField = transformByteArrayField(key, linkValue)
-//        fileDB.seek(numberFirstByte)
-//        val nextField = ByteArray(sizeField)
-//        var prevField = ByteArray(sizeField)
-//        fileDB.read(prevField)
-//        var nowNumberByte = numberFirstByte + sizeField
-//        while (nowNumberByte < fileDB.length()) {
-//            fileDB.read(nextField)
-//            fileDB.seek(nowNumberByte)
-//            fileDB.write(prevField)
-//
-//            nowNumberByte += sizeField
-//            prevField = nextField
-//        }
-//        fileDB.write(prevField)
-//        fileDB.seek(numberFirstByte)
-//        fileDB.write(newField)
-//    }
 
     private fun deleteFieldToDB(fileDB: RandomAccessFile, numberFirstByte: Long) {
         val prevFields = ByteArray((fileDB.length() - (sizeFieldKey + numberFirstByte)).toInt())
