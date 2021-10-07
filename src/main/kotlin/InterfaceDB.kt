@@ -36,8 +36,7 @@ class InterfaceDB {
      * вывод номера байта для вставки нового ключа
      */
 
-    // Private func !!!
-    fun binarySearch(fileDB: RandomAccessFile, keySearch: String): ResponseBinarySearch {
+    internal fun binarySearch(fileDB: RandomAccessFile, keySearch: String): ResponseBinarySearch {
         var left = -1L
         var medium: Long
         var right = fileDB.length() / sizeField
@@ -110,8 +109,7 @@ class InterfaceDB {
         return args.toResponseDB(SUCCESS)
     }
 
-    // Private func !!!
-    fun add(args: Arguments): ResponseDB {
+    internal fun add(args: Arguments): ResponseDB {
         val fileDB = RandomAccessFile(args.db, "rws")
         val (numberFirstByteFieldSearch, isSearched) = binarySearch(fileDB, args.key!!)
         if (isSearched) {
@@ -123,8 +121,7 @@ class InterfaceDB {
         return args.toResponseDB(SUCCESS)
     }
 
-    // Private func !!!
-    fun get(args: Arguments): ResponseDB {
+    internal fun get(args: Arguments): ResponseDB {
         val fileDB = RandomAccessFile(args.db, "r")
         val (numberFirstByteFieldSearch, isSearched) = binarySearch(fileDB, args.key!!)
         if (!isSearched) {
@@ -135,8 +132,7 @@ class InterfaceDB {
         return args.toResponseDB(value = getValueByFirstByte(linkValue), exitCode = SUCCESS)
     }
 
-    // Private func !!!
-    fun update(args: Arguments): ResponseDB {
+    internal fun update(args: Arguments): ResponseDB {
         val fileDB = RandomAccessFile(args.db, "rws")
         val (numberFirstByteFieldSearch, isSearched) = binarySearch(fileDB, args.key!!)
         if (!isSearched) {
@@ -148,8 +144,7 @@ class InterfaceDB {
         return args.toResponseDB(exitCode = SUCCESS)
     }
 
-    // Private func !!!
-    fun delete(args: Arguments): ResponseDB {
+    internal fun delete(args: Arguments): ResponseDB {
         val fileDB = RandomAccessFile(args.db, "rws")
         val (numberFirstByteFieldSearch, isSearched) = binarySearch(fileDB, args.key!!)
         if (!isSearched) {
@@ -222,8 +217,7 @@ class InterfaceDB {
         return arrayKey.toString(Charsets.UTF_8)
     }
 
-    // Private func !!!
-    fun getLinkValueByFirstByte(fileDB: RandomAccessFile, numberFirstByte: Long): Long {
+    internal fun getLinkValueByFirstByte(fileDB: RandomAccessFile, numberFirstByte: Long): Long {
         var arrayLinkValue = ByteArray(sizeFieldLinkValue)
         fileDB.seek(numberFirstByte + sizeFieldKey)
         fileDB.read(arrayLinkValue)
@@ -242,8 +236,7 @@ class InterfaceDB {
         return resultArray
     }
 
-    // Private func !!!
-    fun transformByteArrayField(key: String, linkValue: String): ByteArray {
+    internal fun transformByteArrayField(key: String, linkValue: String): ByteArray {
         val resultArray = ByteArray(sizeFieldKey + sizeFieldLinkValue) { 0x00 }
         for (i in key.indices) {
             resultArray[i] = key[i].code.toByte()
